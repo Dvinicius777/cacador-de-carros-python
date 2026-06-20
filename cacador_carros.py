@@ -16,7 +16,6 @@ def buscar_carro_final():
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Procura as caixas gerais dos anúncios
         anuncios = soup.find_all('div', class_='ui-search-result__wrapper')
 
         if not anuncios:
@@ -25,26 +24,21 @@ def buscar_carro_final():
 
         print(f"✅ Encontrei {len(anuncios)} carros! Listando os top 5:\n")
 
-        contador = 0
-        for anuncio in anuncios:
-            if contador >= 5:
+        count = 0
+        for item in anuncios:
+            if count >= 5:
                 break
             
             try:
-                # === AQUI ESTÁ A CORREÇÃO BASEADA NO SEU PRINT ===
-                
-                # 1. TÍTULO (Nova classe 'poly-component__title')
-                titulo_tag = anuncio.find('a', class_='poly-component__title')
+                titulo_tag = item.find('a', class_='poly-component__title')
                 if not titulo_tag: continue
                 titulo = titulo_tag.text.strip()
                 link = titulo_tag['href']
 
-                # 2. PREÇO (Nova estrutura dentro de 'poly-price__current')
-                preco_tag = anuncio.find('span', class_='andes-money-amount__fraction')
+                preco_tag = item.find('span', class_='andes-money-amount__fraction')
                 preco = preco_tag.text if preco_tag else "Preço não informado"
 
-                # 3. ANO E KM (Bônus: Peguei do seu print também!)
-                detalhes = anuncio.find_all('li', class_='poly-attributes_list__item')
+                detalhes = item.find_all('li', class_='poly-attributes_list__item')
                 info_extra = " | ".join([d.text.strip() for d in detalhes]) if detalhes else ""
 
                 print(f"🚘 {titulo}")
@@ -53,7 +47,7 @@ def buscar_carro_final():
                 print(f"🔗 Link: {link}")
                 print("-" * 60)
                 
-                contador += 1
+                count += 1
 
             except Exception as e:
                 continue
